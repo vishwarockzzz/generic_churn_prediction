@@ -20,17 +20,20 @@ current_model = models["ecommerce"]
 # Define the input data schema
 class InputData(BaseModel):
     data: List[float]  # A list of features for one sample
+    
 
-# Endpoint to switch between datasets/models
+class DatasetRequest(BaseModel):
+    dataset: str
 @app.post("/switch-dataset/")
-def switch_dataset(dataset: str):
+def switch_dataset(request: DatasetRequest):
     global current_model
+    dataset = request.dataset
     if dataset in models:
         current_model = models[dataset]
         return {"status": "success", "message": f"Switched to {dataset} model."}
     else:
         raise HTTPException(status_code=404, detail="Dataset not found.")
-
+    
 # Prediction endpoint
 @app.post("/predict/")
 def predict(input_data: InputData):
